@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Microsoft Team</title>
+
+        <!-- <meta content="width=device-width, initial-scale=1" name="viewport" /> -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <link rel='stylesheet' href='assets/css/app.css' type="text/css">
+        <link rel='stylesheet' href='assets/css/defualt.css' type="text/css">
+
+        
+
+        <script src='/socket.io/socket.io.js'></script>
+        <script type="module" src='assets/js/rtc.js'></script>
+        <script type="module" src='assets/js/events.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js" integrity="sha256-2qQheewaqnZlXJ3RJRghVUwD/3fD9HNqxh4C+zvgmF4=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js'></script>
+        <script src='https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js'></script>
+        <script src='assets/js/autolink.js'></script>
+        <script>
+            function copyToClipboard(text) {
+            var inputc = document.body.appendChild(document.createElement("input"));
+            inputc.value = window.location.href;
+            inputc.focus();
+            inputc.select();
+            document.execCommand('copy');
+            inputc.parentNode.removeChild(inputc);
+            alert("URL Copied.");
+            }
+            </script>
+        
+    </head>
+
+    <body style="background-color: rgb(117, 119, 119);font-family: Georgia;">
+        <div class="custom-modal" id='recording-options-modal'>
+            <div class="custom-modal-content">
+                <div class="row text-center">
+                    <div class="col-md-6 mb-2">
+                        <span class="record-option" id='record-video'>Record video</span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <span class="record-option" id='record-screen'>Record screen</span>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12 text-center">
+                        <button class="btn btn-outline-danger" id='closeModal'>Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <nav class="navbar fixed-top bg-info rounded-0 d-print-none" id="topper">
+           
+            <div class="pull-right room-comm" hidden id="toppercenter">
+                 <div class="y" style="font-weight: 20px"  style="margin-left: 10px; font-size: 100px; color:aliceblue";
+            > <img src="https://image.flaticon.com/icons/png/512/732/732221.png" alt="" height="20px" width="20" > <td></td> <td>Microsoft</div>
+                <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-video' title="Hide Video">
+                    <i class="fa fa-video fa-2x text-white"></i>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-mute' title="Mute">
+                    <i class="fa fa-microphone-alt fa-2x text-white"></i>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect" id='share-screen' title="Share screen">
+                    <i class="	fas fa-laptop fa-2x text-white"></i>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect" id='record' title="Record">
+                    <i class="fa fa-dot-circle fa-2x text-white"></i>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect clipboard" onclick="copyToClipboard('aayush')"  title="inivit friends">
+                    <i class="fa fa-user-plus text-white fa-2x" aria-hidden="true"></i>
+                </button>
+
+                <button class="btn btn-sm text-white pull-right btn-no-effect" id='toggle-chat-pane'>
+                    <i class="fa fa-comment fa-2x"></i> <span class="badge badge-danger very-small font-weight-lighter" id='new-chat-notification' hidden>New</span>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect text-white">
+                    <a href="/" class="text-white text-decoration-none"><i class="fa fa-sign-out-alt fa-2x text-white" title="Leave"></i></a>
+                </button>
+
+            </div>
+        </nav>
+
+        <div class="container-fluid" id='room-create' hidden style="padding: 0; background-color: white;">
+            <nav class="main-nav">
+                <img src="https://i.ibb.co/wwLhz98/logo.png" alt="Microsoft" class="logo">
+                &nbsp;&nbsp; <h3 style="margin: auto; font-size:19px; font-weight: 750;">    &nbsp;&nbsp;|  Teams</h3>
+                <ul class="main-menu">
+                  <li><a  class="aayush" href="#">  Products</a></li>
+                  <li><a class="aayush" href="#"> Resources</a></li>
+                  <li><a class="aayush" href="#">Solutions</a></li>
+                  <li><a class="aayush" href="#">Pricing</a></li>
+                  <li><a class="aayush" href="#">support</a></li>
+                  <li><a class="aayush" href="#">More</a></li>
+                </ul>
+          
+                <ul class="right-menu">
+                  <li>
+                    <a class="aayush" href="#">
+                      <i class="fas fa-search "></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="aayush" href="#">
+                        <i class="fa fa-user  " aria-hidden="true"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div class="newdiv"><div style="text-align: center;
+                position: absolute;
+                left: 362px;
+                font-size: larger;" >Now use Microsoft Teams with family and friends to call, chat, and make plans.
+
+ 
+                Learn more</div></div>
+
+                <div class="nike">
+            <div class="row" style="color: white; font-weight:700;">
+                <div class="col-12 h2 mt-5 text-center">Create Room</div>
+            </div>
+            <!-- <div class="flex-container">
+
+                <div class="flex-child magenta">
+                  Flex Column 1
+                </div>
+                
+                <div class="flex-child green">
+                  Flex Column 2
+                </div>
+                
+              </div> -->
+          
+              
+                      <div class="row mt-2" style="color: white; font-weight: 400; font-size: 23px;">
+                            <div class="col-12 text-center">
+                                <span class="form-text small  text-danger" id='err-msg'></span>
+                </div>
+
+                          <div class="col-12 col-md-4 offset-md-4 mb-3">
+                         <label for="room-name">Room Name</label>
+                          <input type="text" id='room-name' class="form-control " placeholder="Room Name">
+                </div>
+
+                                     <div class="col-12 col-md-4 offset-md-4 mb-3">
+                                     <label for="your-name">Your Name</label>
+                                    <input type="text" id='your-name' class="form-control " placeholder="Your Name">
+                </div>
+
+                <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <button id='create-room' class="btn btn-block  btn-info">Create Room</button>
+                      </div></div>
+
+
+                            <div class="col-12 col-md-4 offset-md-4 mb-3" id='room-created' style="color: white;"></div>
+                     </div>
+        
+            <section id='features'>
+                <h style="color: rgb(0, 0, 0); font-size:25px; font-weight: bold; margin-left: 170px; margin-right: 30px; position: relative; top:-40px;">App Feature</h>
+                <div class="row1 feature design">
+                    
+                   <div class="six columns right">
+                    <h style="color: black; font-weight: bold; font-size: large;">Microsoft Teams is for everyone.</h>
+          
+                      <p>Whether it’s chat, calls, or video, anyone can engage at any time, bringing everyone closer.<br>
+
+                        Your docs, photos, videos, chat history, and meeting notes are always there, so it’s easier to work together.<br>
+                        
+                        Set up your team’s space with all the apps you need so you can stay in just one place instead of jumping around.
+                        
+                        
+                      </p>
+                   </div>
+          
+                   <div class="six columns feature-media left">
+                       <img src="https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RWEMVm?ver=20ff&q=90&m=2&h=768&w=1024&b=%23FFFFFFFF&aim=true" alt="" />
+                   </div>
+          
+                </div>
+          
+                <div class="row1 feature responsive">
+          
+                   <div class="six columns left">
+                    <h style="color: black; font-weight: bold; font-size: large;">Fully Responsive Call.</h>
+          
+                      <p>Make and receive calls directly in Microsoft Teams with advanced features like group calling, cloud voicemail, and call transfers.
+
+                      <a href="https://www.microsoft.com/en-in/microsoft-teams/voice-calling">Learn more</a>
+                      </p>
+                   </div>
+          
+                   <div class="six columns feature-media right">
+                       <img src="https://www.cnet.com/a/img/QpCCrLPk8MoFPF7KOhD3plQiWjQ=/940x0/2021/05/17/48b6433f-92eb-4270-9f8a-ad4690b13247/microsoft-teams-call-and-chat.png" alt="" />
+                   </div>
+          
+                </div>
+          
+                <div class="row1 feature cross-browser">
+                   <div class="six columns right">
+                    <h style="color: black; font-weight: bold;">Meet</h>
+                      <p>
+                        Make meetings more personal and encourage teamwork when you virtually meet face-to-face. Meet in any situation, whether you’re calling one-on-one, delivering a sales pitch, hosting a team training, or running a company-wide town hall.
+                      </p>
+
+                        <strong style="color: black; font-weight: bold;">Virtual events</strong>
+                      <p>Hold secure, interactive meetings and webinars for 1,000 attendees and broadcasts for up to 10,000.1
+                    </p>
+                    <strong style="color: black; font-weight: bold;">Audio Conferencing</strong>
+                      <p>
+                        Let people join meetings on the go with a global dial-in number or contact each other directly. All they need is a mobile device and Microsoft Teams.3
+                    </p>
+                   </div>
+          
+                   <div class="six columns feature-media left">
+                       <img src="data:image/jpeg;base64,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" alt="" />
+                   </div>
+          
+                </div>
+          
+                <div class="row1 feature video">
+          
+                   <div class="six columns left">
+                    <h style="color: black; font-weight: bold;">Video Support.</h>
+          
+                      <p>Microsoft Teams Connect enables users to share channels across multiple organizations. With this new capability, you can collaborate seamlessly in the same digital environment with anyone, whether inside or outside your organization – leveraging all the rich collaboration capabilities that Teams brings together: chat, meet, collaborate on apps, share, and co-author documents in real-time.
+                      </p>
+                   </div>
+          
+                   <div class="six columns feature-media right">
+                       <div class="fluid-video-wrapper">
+                            <iframe src="https://www.microsoft.com/en-IN/videoplayer/embed/RE4Ie3j?pid=RE4Ie3j-oneplayer&autoplay=false&mute=false&loop=false&playFullScreen=false&market=en-IN&maskLevel=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
+                       </div>
+                   </div>
+          
+                </div>
+            </section>
+
+
+
+
+            <!-- Home cards 2 -->
+
+                      
+
+             <section id="screenshots">
+                 <br>
+                <div class="row1 section-head">
+          
+                   <h style="color: rgb(0, 0, 0); font-size:25px; font-weight: bold; margin-left: 60px; margin-right: 30px;">Product Screenshots.</h>
+          
+                   <p style="margin-left: 60px; margin-right: 60px;" >Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam,
+                   eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
+                   voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+                   </p>
+          
+                </div>
+          
+                <div class="row1">
+          
+                   <div class="twelve columns">
+          
+                      <!-- screenshots-wrapper -->
+                      <div id="screenshots-wrapper" class="bgrid-quarters s-bgrid-thirds cf">
+          
+                           <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://docs.microsoft.com/en-us/microsoftteams/media/meetings-first-meeting-in-meeting.png" data-imagelightbox="a" >
+                                  <img src="https://www.ramsac.com/wp-content/uploads/2020/11/shutterstock_1684229401.jpg" alt="Line Icons">
+                                  <div class="overlay"></div> 
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://lh3.googleusercontent.com/proxy/0aRvsF0wIW4ReNZdmHMy79Qz8LqOClgRWrH1HwS2K6OyX4SNgYa3mJjZ6aNYbrO1kMyoqZHPwAXtJxAjwe4nsrL6eInlQqEhjlBcyeo8b37nAbpqL-2n0lef6KhrLu62PFBhv7ib" data-imagelightbox="a" >
+                                  <img src="https://storage.googleapis.com/gweb-cloudblog-publish/images/Google_Meet_Polls.max-2000x2000.jpg" alt="Hipster">
+                                  <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://www.avepoint.com/blog/wp-content/uploads/2019/04/Teams-Killing-Skype-1.jpg" data-imagelightbox="a" >
+                                  <img src="https://www.avepoint.com/blog/wp-content/uploads/2019/04/Teams-Killing-Skype-1.jpg" alt="Authentic Vintage">                        
+                                  <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://expcontent.blob.core.windows.net/assets/msd_e4/Teams_DefaultFeature_Teams_800x450.jpg" data-imagelightbox="a" >
+                                  <img src="https://expcontent.blob.core.windows.net/assets/msd_e4/Teams_DefaultFeature_Teams_800x450.jpg" alt="Spot UV Logo">
+                                  <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://helpdeskgeek.com/wp-content/pictures/2020/04/microsoft-teams.png" data-imagelightbox="a" >
+                                   <img src="https://helpdeskgeek.com/wp-content/pictures/2020/04/microsoft-teams.png" alt="TShirt Mockup">
+                                     <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://support.content.office.net/en-us/media/3bc836a2-9a74-4f20-a0dd-b312539e70de.png" data-imagelightbox="a" >
+                                  <img src="https://support.content.office.net/en-us/media/3bc836a2-9a74-4f20-a0dd-b312539e70de.png" alt="Abstract Vector">
+                                  <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://www.ramsac.com/wp-content/uploads/2020/11/shutterstock_1684229401.jpg" data-imagelightbox="a" >
+                                  <img src="https://www.ramsac.com/wp-content/uploads/2020/11/shutterstock_1684229401.jpg" alt="Embossed Paper">                        
+                                  <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div> <!-- item end -->
+          
+                         <div class="columns item">
+                            <div class="item-wrap">
+          
+                               <a href="https://expcontent.blob.core.windows.net/assets/msd_e4/Teams_DefaultFeature_Teams_800x450.jpg" data-imagelightbox="a" >
+                                  <img src="https://d3hjf51r9j54j7.cloudfront.net/wp-content/uploads/sites/9/2020/03/Microsoft-Teams-620x330.jpg" alt="Judah">
+                                  <div class="overlay"></div>
+                                  <div class="link-icon"><i class="icon-plus"></i></div>
+                               </a>
+          
+                            </div>
+                            </div>  <!-- item end -->
+          
+                      </div> <!-- portfolio-wrapper end -->
+          
+                   </div> <!-- twelve columns end -->
+          
+                </div>  <!-- end row -->
+          
+             </section>
+
+
+<!-- home-cards section  -->
+             <section class="home-cards">
+                <div>
+                    <img src="https://i.ibb.co/zVqhWn2/card5.png" alt="" />
+                    <h3>Microsoft Teams</h3>
+                    <p>
+                        Unleash the power of your team.
+                    </p>
+                    <a href="#">Shop Now <i class="fas fa-chevron-right"></i></a>
+                </div>
+
+
+                <div>
+                    <img src="https://i.ibb.co/mGZcxcn/card6.jpg" alt="" />
+                    <h3>Unlock the power of learning</h3>
+                    <p>
+                        Get students future-ready with Windows 10 devices. Starting at $219.
+                    </p>
+                    <a href="#">Shop Now <i class="fas fa-chevron-right"></i></a>
+                </div>
+
+
+                <div>
+                    <img src="https://i.ibb.co/NpPvVHj/card7.png" alt="" />
+                    <h3>Windows 10 Enterprise</h3>
+                    <p>
+                        Download the free 90-day evaluation for IT professionals.
+                    </p>
+                    <a href="#">Download Now <i class="fas fa-chevron-right"></i></a>
+                </div>
+
+
+                <div>
+                    <img src="https://i.ibb.co/LkP4L5T/card8.png" alt="" />
+                    <h3>Explore Kubernetes</h3>
+                    <p>
+                        Learn how Kubernetes works and get started with cloud native app
+                        development today.
+                    </p>
+                    <a href="#">Get Started <i class="fas fa-chevron-right"></i></a>
+                </div>
+
+
+      </section>
+
+<footer class="footer ">
+<div class="container bottom_border">
+<div class="row">
+
+
+<div class=" col-sm-4 col-md  col-6 col change_fonte">
+<h5 class="headin5_amrc col_white_amrc pt2">What's new</h5>
+<!--headin5_amrc-->
+<ul class="footer_ul_amrc">
+<li><a href="https://www.microsoft.com/en-in">Microsoft 365</a></li>
+<li><a href="https://www.microsoft.com/en-in">Surface Pro X</a></li>
+<li><a href="https://www.microsoft.com/en-in">Surface Pro 7</a></li>
+<li><a href="https://www.microsoft.com/en-in">Surface Laptop 3</a></li>
+<li><a href="https://www.microsoft.com/en-in">Windows 10 apps</a></li>
+</ul>
+<!--footer_ul_amrc ends here-->
+</div>
+
+<div class=" col-sm-4 col-md  col-6 col change_fonte">
+    <h5 class="headin5_amrc col_white_amrc pt2">Microsoft Store</h5>
+    <!--headin5_amrc-->
+    <ul class="footer_ul_amrc">
+    <li><a href="https://www.microsoft.com/en-in">Account profile</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Download Center</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Microsoft Store Support</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Returns</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Order tracking</a></li>
+    </ul>
+    <!--footer_ul_amrc ends here-->
+    </div>
+   
+
+    <div class=" col-sm-4 col-md  col-6 col change_fonte">
+        <h5 class="headin5_amrc col_white_amrc pt2">Education</h5>
+        <!--headin5_amrc-->
+        <ul class="footer_ul_amrc">
+        <li><a href="https://www.microsoft.com/en-in">Image Rectoucing</a></li>
+        <li><a href="https://www.microsoft.com/en-in"> Microsoft in education</a></li>
+        <li><a href="https://www.microsoft.com/en-in">Office for students</a></li>
+        <li><a href="https://www.microsoft.com/en-in">  Office 365 for schools</a></li>
+        <li><a href="https://www.microsoft.com/en-in"> Microsoft Azure in education</a></li>
+        </ul>
+        <!--footer_ul_amrc ends here-->
+        </div>
+        
+        <div class=" col-sm-4 col-md  col-6 col change_fonte">
+            <h5 class="headin5_amrc col_white_amrc pt2">Enterprise</h5>
+            <!--headin5_amrc-->
+            <ul class="footer_ul_amrc">
+            <li><a href="https://www.microsoft.com/en-in">AppSource</a></li>
+            <li><a href="https://www.microsoft.com/en-in">Azure</a></li>
+            <li><a href="https://www.microsoft.com/en-in">Automotive</a></li>
+            <li><a href="https://www.microsoft.com/en-in">Government</a></li>
+            <li><a href="https://www.microsoft.com/en-in">Healthcare</a></li>
+            <li><a href="https://www.microsoft.com/en-in">Financial services</a></li>
+            </ul>
+            <!--footer_ul_amrc ends here-->
+            </div>
+
+            
+<div class=" col-sm-4 col-md  col-6 col change_fonte">
+<h5 class="headin5_amrc col_white_amrc pt2">Developer</h5>
+<!--headin5_amrc-->
+<ul class="footer_ul_amrc">
+<li><a href="https://www.microsoft.com/en-in">Microsoft Visual Studio</a></li>
+<li><a href="https://www.microsoft.com/en-in">Developer Center</a></li>
+<li><a href="https://www.microsoft.com/en-in">Logo Design</a></li>
+<li><a href="https://www.microsoft.com/en-in">Channel 9</a></li>
+</ul>
+<!--footer_ul_amrc ends here-->
+</div>
+
+          
+<div class=" col-sm-4 col-md  col-6 col change_fonte">
+    <h5 class="headin5_amrc col_white_amrc pt2">Company</h5>
+    <!--headin5_amrc-->
+    <ul class="footer_ul_amrc">
+    <li><a href="https://www.microsoft.com/en-in">Careers</a></li>
+    <li><a href="https://www.microsoft.com/en-in">About Microsoft</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Company news</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Investorst</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Security</a></li>
+    </ul>
+    <!--footer_ul_amrc ends here-->
+    </div>
+    
+    
+
+<!--footer_ul2_amrc ends here-->
+</div>
+</div>
+
+<div class="container">
+
+    <ul class="foote_bottom_ul_amrc">
+    <li><a href="https://www.microsoft.com/en-in">Contact</a></li>
+    <li><a href="https://www.microsoft.com/en-in">About</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Microsoft</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Privacy</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Terms of use</a></li>
+    <li><a href="https://www.microsoft.com/en-in">Trademarks </a></li>
+    </ul>
+    <!--foote_bottom_ul_amrc ends here-->
+    <p class="text-center">ads © Microsoft 2021 <a href="#">microsoft Team</a></p>
+    
+    <ul class="social_footer_ul">
+    <li><a href="https://www.microsoft.com/en-in"><i class="fab fa-facebook-f"></i></a></li>
+    <li><a href="https://www.microsoft.com/en-in"><i class="fab fa-twitter"></i></a></li>
+    <li><a href="https://www.microsoft.com/en-in"><i class="fab fa-linkedin"></i></a></li>
+    <li><a href="https://www.microsoft.com/en-in"><i class="fab fa-instagram"></i></a></li>
+    </ul>
+    <!--social_footer_ul ends here-->
+    </div>
+
+
+
+</footer>
+
+
+
+        </div>
+
+
+
+        <div class="container-fluid" id='username-set' hidden>
+            <nav class="main-nav">
+                <img src="https://i.ibb.co/wwLhz98/logo.png" alt="Microsoft" class="logo">
+                &nbsp;&nbsp; <h3 style="margin: auto; font-size:19px; font-weight: 750;">    &nbsp;&nbsp;|  Teams</h3>
+                <ul class="main-menu">
+                  <li><a  class="aayush" href="#">  Products</a></li>
+                  <li><a class="aayush" href="#"> Resources</a></li>
+                  <li><a class="aayush" href="#">Solutions</a></li>
+                  <li><a class="aayush" href="#">Pricing</a></li>
+                  <li><a class="aayush" href="#">support</a></li>
+                  <li><a class="aayush" href="#">More</a></li>
+                </ul>
+          
+                <ul class="right-menu">
+                  <li>
+                    <a class="aayush" href="#">
+                      <i class="fas fa-search "></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="aayush" href="#">
+                        <i class="fa fa-user  " aria-hidden="true"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div class="newdiv"><div style="text-align: center;
+                position: absolute;
+                left: 362px;
+                font-size: larger;" >Now use Microsoft Teams with family and friends to call, chat, and make plans.
+
+ 
+                Learn more</div></div>
+            <div class="row">
+                <div class="col-12 h4 mt-5 text-center">Your Name</div>
+            </div>
+            
+            <div class="row mt-2">
+                <div class="col-12 text-center">
+                    <span class="form-text small text-danger" id='err-msg-username'></span>
+                </div>
+
+                <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <label for="username">Your Name</label>
+                    <input type="text" id='username' class="form-control rounded-0" placeholder="Your Name">
+                </div>
+
+                <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <button id='enter-room' class="btn btn-block rounded-0 btn-info">Enter Room</button>
+                </div>
+            </div>
+            
+            
+        </div>
+
+
+        
+        <div class="container-fluid room-comm" hidden>
+            <div class="row">
+                <video class="local-video mirror-mode" id='local' volume='0' autoplay muted></video>
+            </div>
+            
+            <center><div class="row">
+              <div class="main_left" id='main-section'>                    
+                    <div class="video-grid" id='videos'></div></div>
+                </div></center>
+
+                <div class="col-md-3 chat-col d-print-none mb-2 " id='chat-pane' hidden>
+                    <div class="row">
+                        <div class="col-12 text-center h2 mb-3">In call messages</div>
+                    </div>
+
+                    <div id='chat-messages'></div>
+
+                    <div class="row">
+                        <textarea id='chat-input' class=" chat-box1 border-info" rows='3' placeholder="Type here..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
