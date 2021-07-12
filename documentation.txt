@@ -1,0 +1,39 @@
+Microsoft Engage PROGRAM 2021
+The Challenge is to  Build a Microsoft Teams clone 
+this project build under the mentor of Microsoft  raja sir and chirayu sir 
+first find the best lang. and frameworks which is best for you and easy to understand
+for me i used to code in html react js that's why i go for it 
+
+# Conference Call
+A conference call implementation using WebRTC, Socket.io and Node.js.
+
+
+#Getting Started
+- Run `npm ci`
+- `cd src`
+- `node app.js`
+
+
+# Features
+- Multi-participants
+- Toggling of video stream
+- Toggling of audio stream (mute & unmute)
+- Screen sharing
+- Text chat
+- Mute individual participant
+- Screen Recording
+- Video Recording
+- invit frinds 
+- chat section
+
+#  source code  
+@ IMPORTANT refer this documentation 
+
+https://webrtc.org/getting-started/overview
+
+ this sites is very useful for understanding source code 
+ you can perform every function one by onE those are useful for video call  
+ ALL THE MAIN CODE OF SERVER is in rtc.js and stream;
+ for css there is a folder name "css" contain defult.css or app.js ...defult file's code is use or layout or style button form table.
+ ALL onclick functions code  is present in helper'section
+ github url=https://github.com/ayushmina/
