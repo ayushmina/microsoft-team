@@ -1,4 +1,4 @@
-# Conference Call
+# Microsoft team clone 
 A conference call implementation using WebRTC, Socket.io and Node.js.
 
 
@@ -8,7 +8,7 @@ A conference call implementation using WebRTC, Socket.io and Node.js.
 - `node app.js`
 
 
-# Features
+# Features-
 - Multi-participants
 - Toggling of video stream
 - Toggling of audio stream (mute & unmute)
@@ -18,10 +18,11 @@ A conference call implementation using WebRTC, Socket.io and Node.js.
 - Expand participants' stream
 - Screen Recording
 - Video Recording
+- copy url(for sharing to our frinds) 
 
  
-
-# Demo
-You can test at https://microsoft--team.herokuapp.com/
+# Demo 
+You can  create link and join meeting => https://microsoft--team.herokuapp.com/
 # source code()
+
 https://webrtc.org/getting-started/overview
